@@ -9,39 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet
-           <!-- Firebase CDN -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
-        import { getDatabase, ref, set, onValue, push, update, remove } 
-            from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-        
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDJcCsuhLnmhGnpSkYEexBA3bE5UifWgKg",
-            authDomain: "markaz-school-f892b.firebaseapp.com",
-            projectId: "markaz-school-f892b",
-            storageBucket: "markaz-school-f892b.firebasestorage.app",
-            messagingSenderId: "42458380951",
-            appId: "1:42458380951:web:a8198f990ed93b08b9c7d2",
-            measurementId: "G-N4MSQZFP7T"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getDatabase(app);
-        
-        // Make Firebase available globally
-        window.firebaseApp = app;
-        window.firebaseDb = db;
-        window.firebaseRef = ref;
-        window.firebaseSet = set;
-        window.firebaseOnValue = onValue;
-        window.firebasePush = push;
-        window.firebaseUpdate = update;
-        window.firebaseRemove = remove;
-    </script>
+<!-- Firebase SDK (CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    
+    <!-- SheetJS for Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Your app script (NO type="module") -->
+    <script src="app.js"></script>
 </head>
 <body>
 
