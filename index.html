@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز دار السعادة - School Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="offlineIndicator" class="offline-indicator" style="display:none;">⚠️ You are offline - Data saved locally</div>
+
+    <!-- LOGIN -->
+    <div id="loginSection" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="logo.png" alt="Markaz Logo" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-placeholder" style="display:none;">🏫</div>
+                <h1 class="school-name-arabic">مركز دار السعادة</h1>
+                <p class="school-name-english">MARKAZ DAARU SACAADA</p>
+                <p class="school-subtitle">School Management System</p>
+                <div class="welcome-message" id="welcomeMessage" style="display:none;">
+                    <h2>Welcome! 👋</h2><p>Logging you in...</p>
+                </div>
+            </div>
+            <form id="loginForm">
+                <div class="form-group"><label>Username</label><input type="text" id="username" required placeholder="Enter your username"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="password" required placeholder="Enter your password"></div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="loginRole" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="manager">Administrator</option>
+                        <option value="finance">المحاسب</option>
+                        <option value="teacher_class_omar">معلم - فصل عمر</option>
+                        <option value="teacher_class_abubakar">معلم - فصل ابوبكر</option>
+                        <option value="teacher_class_khadija">معلم - فصل خديجة</option>
+                        <option value="teacher_class_hijaa1">معلم - فصل الهجاء الأول</option>
+                        <option value="teacher_class_hijaa2">معلم - فصل الهجاء الثاني</option>
+                        <option value="teacher_class_tasis">معلم - فصل التأسيس</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-full"><span id="loginBtnText">Login to System</span><span id="loginSpinner" class="spinner" style="display:none;"></span></button>
+                <div id="errorMessage" class="message-box"></div>
+            </form>
+            <div class="login-footer"><p>Demo: admin / admin123 / Administrator</p></div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboardSection" class="dashboard-container" style="display:none;">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="logo.png" alt="Markaz Logo" class="nav-logo" onerror="this.style.display='none'">
+                <div class="brand-info"><span class="brand-text-arabic">مركز دار السعادة</span><span class="brand-subtitle">School Management System</span></div>
+            </div>
+            <div class="nav-user">
+                <div class="user-info"><div class="user-avatar">👤</div><div class="user-details"><span id="userName" class="user-name"></span><span id="userRole" class="role-badge"></span></div></div>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="main-wrapper">
+            <aside class="sidebar">
+                <div class="sidebar-header"><h3>MAIN MENU</h3></div>
+                <ul class="menu">
+                    <li><a href="#" data-section="home" class="menu-item active"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a></li>
+                    <li id="staffMenu" style="display:none;"><a href="#" data-section="staff" class="menu-item"><span class="menu-icon">👥</span><span class="menu-text">Staff & Payroll</span></a></li>
+                    <li id="registrationMenu" style="display:none;"><a href="#" data-section="registration" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">Registration</span></a></li>
+                    <li id="studentsMenu" style="display:none;"><a href="#" data-section="students" class="menu-item"><span class="menu-icon">🎓</span><span class="menu-text">Students</span></a></li>
+                    <li id="graduatedMenu" style="display:none;"><a href="#" data-section="graduated" class="menu-item"><span class="menu-icon">🏆</span><span class="menu-text">Graduated</span></a></li>
+                    <li id="attendanceMenu" style="display:none;"><a href="#" data-section="attendance" class="menu-item"><span class="menu-icon">✅</span><span class="menu-text">Attendance</span></a></li>
+                    <li id="financeMenu" style="display:none;"><a href="#" data-section="finance" class="menu-item"><span class="menu-icon">💰</span><span class="menu-text">Finance</span></a></li>
+                    <li id="reportsMenu" style="display:none;"><a href="#" data-section="reports" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">Reports</span></a></li>
+                    <li id="aboutMenu" style="display:none;"><a href="#" data-section="about" class="menu-item"><span class="menu-icon">ℹ️</span><span class="menu-text">About</span></a></li>
+                    <li id="settingsMenu" style="display:none;"><a href="#" data-section="settings" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Settings</span></a></li>
+                </ul>
+            </aside>
+
+            <main class="content">
+                <!-- HOME -->
+                <section id="homeSection" class="section active">
+                    <div class="section-header"><div><h1>Dashboard Overview</h1><p id="dashboardWelcome">Welcome back!</p></div><div class="current-date" id="currentDate"></div></div>
+                    <div class="stats-grid">
+                        <div class="stat-card stat-primary"><div class="stat-icon-wrapper">🎓</div><div class="stat-info"><h3 id="totalStudents">0</h3><p>Total Students</p></div></div>
+                        <div class="stat-card stat-success"><div class="stat-icon-wrapper">✅</div><div class="stat-info"><h3 id="todayAttendance">0</h3><p>Present Today</p></div></div>
+                        <div class="stat-card stat-warning finance-only"><div class="stat-icon-wrapper">💵</div><div class="stat-info"><h3 id="totalRequirements">$0</h3><p>Total Requirements</p></div></div>
+                        <div class="stat-card stat-info finance-only"><div class="stat-icon-wrapper">📥</div><div class="stat-info"><h3 id="totalCollected">$0</h3><p>Total Collected</p></div></div>
+                        <div class="stat-card stat-danger finance-only"><div class="stat-icon-wrapper">⚠️</div><div class="stat-info"><h3 id="pendingFees">$0</h3><p>Pending Fees</p></div></div>
+                        <div class="stat-card stat-success finance-only"><div class="stat-icon-wrapper">🏆</div><div class="stat-info"><h3 id="totalGraduated">0</h3><p>Graduated Students</p></div></div>
+                    </div>
+                    <div class="charts-row">
+                        <div class="card chart-card"><h3>Weekly Attendance</h3><div class="chart-container"><canvas id="attendanceChart"></canvas></div></div>
+                        <div class="card chart-card finance-only"><h3>Monthly Finance</h3><div class="chart-container"><canvas id="financeChart"></canvas></div></div>
+                    </div>
+                </section>
+
+                <!-- STAFF -->
+                <section id="staffSection" class="section">
+                    <div class="section-header"><h1>Staff & Payroll Management</h1></div>
+                    <div class="card">
+                        <h3 id="staffFormTitle">Add New Staff</h3>
+                        <form id="staffForm">
+                            <input type="hidden" id="staffId">
+                            <div class="form-row">
+                                <div class="form-group"><label>Full Name *</label><input type="text" id="staffName" required></div>
+                                <div class="form-group"><label>Username *</label><input type="text" id="staffUsername" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Password *</label><input type="password" id="staffPassword" required></div>
+                                <div class="form-group"><label>Role *</label><select id="staffRole" required><option value="">Select Role...</option><option value="manager">Administrator</option><option value="finance">المحاسب</option><option value="teacher_class_omar">معلم - فصل عمر</option><option value="teacher_class_abubakar">معلم - فصل ابوبكر</option><option value="teacher_class_khadija">معلم - فصل خديجة</option><option value="teacher_class_hijaa1">معلم - فصل الهجاء الأول</option><option value="teacher_class_hijaa2">معلم - فصل الهجاء الثاني</option><option value="teacher_class_tasis">معلم - فصل التأسيس</option></select></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Monthly Salary ($) *</label><input type="number" id="staffSalary" required min="0"></div>
+                                <div class="form-group"><label>Phone Number</label><input type="tel" id="staffPhone"></div>
+                            </div>
+                            <div class="form-group" style="margin-top: 15px;"><label style="font-size: 16px; color: var(--primary); margin-bottom: 12px;">🔐 User Permissions (Tick to allow access)</label>
+                                <div class="permissions-grid">
+                                    <label class="perm-checkbox"><input type="checkbox" id="perm_students" checked> <span>🎓 View/Edit Students</span></label>
+                                    <label class="perm-checkbox"><input type="checkbox" id="perm_finance"> <span>💰 Manage Finance</span></label>
+                                    <label class="perm-checkbox"><input type="checkbox" id="perm_attendance"> <span>✅ Manage Attendance</span></label>
+                                    <label class="perm-checkbox"><input type="checkbox" id="perm_reports"> <span>📊 View Reports</span></label>
+                                    <label class="perm-checkbox"><input type="checkbox" id="perm_graduated"> <span>🏆 Manage Graduated</span></label>
+                                    <label class="perm-checkbox"><input type="checkbox" id="perm_settings"> <span>⚙️ System Settings</span></label>
+                                </div>
+                            </div>
+                            <div class="form-actions"><button type="submit" class="btn-primary" id="staffSubmitBtn">Save Staff</button><button type="button" class="btn-secondary" onclick="cancelStaffEdit()">Cancel</button></div>
+                            <div id="staffMessage" class="message-box"></div>
+                        </form>
+                    </div>
+                    <div class="card"><h3>System Users</h3><div class="table-container"><table id="staffTable"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Permissions</th><th>Salary</th><th>Actions</th></tr></thead><tbody id="staffTableBody"></tbody></table></div></div>
+                </section>
+
+                <!-- REGISTRATION (WITH EXCEL UPLOAD) -->
+                <section id="registrationSection" class="section">
+                    <div class="section-header"><h1>Student Registration</h1></div>
+                    
+                    <!-- EXCEL UPLOAD CARD -->
+                    <div class="card upload-card">
+                        <h3>📤 Bulk Upload Students via Excel</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 15px;">Upload an Excel file (.xlsx, .xls) to register multiple students at once. Ensure columns match the template.</p>
+                        <div class="upload-actions">
+                            <button onclick="downloadExcelTemplate()" class="btn-secondary template-btn">📥 Download Excel Template</button>
+                            <label class="btn-primary upload-btn-label">
+                                📂 Choose Excel File
+                                <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display: none;" onchange="handleExcelUpload(event)">
+                            </label>
+                        </div>
+                        <div id="uploadStatus" class="message-box" style="margin-top: 15px;"></div>
+                    </div>
+
+                    <!-- MANUAL REGISTRATION FORM -->
+                    <div class="card">
+                        <h3 id="studentFormTitle">Register New Student Manually</h3>
+                        <form id="registrationForm">
+                            <input type="hidden" id="studentId">
+                            <div class="form-row">
+                                <div class="form-group"><label>Student Name *</label><input type="text" id="studentName" required></div>
+                                <div class="form-group"><label>Age *</label><input type="number" id="studentAge" required min="5" max="50"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Gender *</label><select id="studentGender" required><option value="">Select...</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                                <div class="form-group"><label>Class *</label><select id="studentClass" required><option value="">Select Class...</option><option value="فصل عمر">فصل عمر</option><option value="فصل ابوبكر">فصل ابوبكر</option><option value="فصل خديجة">فصل خديجة</option><option value="فصل الهجاء الأول">فصل الهجاء الأول</option><option value="فصل الهجاء الثاني">فصل الهجاء الثاني</option><option value="فصل التأسيس">فصل التأسيس</option></select></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Shift / Session *</label><select id="studentShift" required><option value="">Select Session...</option><option value="Morning">Morning Session</option><option value="Afternoon">Afternoon Session</option><option value="Full">Full Day</option></select></div>
+                                <div class="form-group"><label>Student Type *</label><select id="studentType" required><option value="Regular">Regular (Paying)</option><option value="Scholarship">Scholarship (Free)</option></select></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Monthly Fee ($) *</label><input type="number" id="studentFee" value="0" min="0" required></div>
+                                <div class="form-group"><label>Guardian Name *</label><input type="text" id="guardianName" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Guardian Phone *</label><input type="tel" id="guardianPhone" required></div>
+                                <div class="form-group"><label>Enrollment Date *</label><input type="date" id="enrollmentDate" required></div>
+                            </div>
+                            <div class="form-group"><label>Address</label><input type="text" id="studentAddress"></div>
+                            <div class="form-actions"><button type="submit" class="btn-primary" id="regSubmitBtn">Register Student</button><button type="button" class="btn-secondary" onclick="cancelStudentEdit()">Cancel</button></div>
+                            <div id="regMessage" class="message-box"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- STUDENTS -->
+                <section id="studentsSection" class="section">
+                    <div class="section-header"><h1>Students List</h1></div>
+                    <div class="card">
+                        <div class="search-box">
+                            <input type="text" id="searchStudents" placeholder="Search by name or phone...">
+                            <select id="filterClass"><option value="">All Classes</option><option value="فصل عمر">فصل عمر</option><option value="فصل ابوبكر">فصل ابوبكر</option><option value="فصل خديجة">فصل خديجة</option><option value="فصل الهجاء الأول">فصل الهجاء الأول</option><option value="فصل الهجاء الثاني">فصل الهجاء الثاني</option><option value="فصل التأسيس">فصل التأسيس</option></select>
+                            <select id="filterFinancialStatus" class="finance-only"><option value="">All Status</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="unpaid">Unpaid</option><option value="free">Free/Scholarship</option></select>
+                        </div>
+                        <div class="table-container">
+                            <table id="studentsTable">
+                                <thead><tr><th>Name</th><th>Class</th><th>Shift</th><th>Guardian</th><th>Phone</th><th class="finance-only">Fee Status</th><th>Actions</th></tr></thead>
+                                <tbody id="studentsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GRADUATED -->
+                <section id="graduatedSection" class="section">
+                    <div class="section-header"><h1>Graduated Students</h1></div>
+                    <div class="card">
+                        <h3>Mark Student as Graduated</h3>
+                        <div class="search-box"><input type="text" id="gradSearchStudent" placeholder="Search student to graduate..."><select id="gradFilterClass"><option value="">All Classes</option><option value="فصل عمر">فصل عمر</option><option value="فصل ابوبكر">فصل ابوبكر</option><option value="فصل خديجة">فصل خديجة</option><option value="فصل الهجاء الأول">فصل الهجاء الأول</option><option value="فصل الهجاء الثاني">فصل الهجاء الثاني</option><option value="فصل التأسيس">فصل التأسيس</option></select></div>
+                        <div id="selectedGradStudent" class="student-info-card" style="display:none;"><div class="info-row"><span>Student Name:</span><span id="gradStudentName"></span></div><div class="info-row"><span>Class:</span><span id="gradStudentClass"></span></div><div class="info-row"><span>Enrollment Date:</span><span id="gradEnrollmentDate"></span></div></div>
+                        <form id="graduationForm" style="display:none; margin-top: 20px;"><input type="hidden" id="gradStudentId"><div class="form-row"><div class="form-group"><label>Graduation Date *</label><input type="date" id="graduationDate" required></div><div class="form-group"><label>Graduation Level *</label><select id="graduationLevel" required><option value="">Select Level...</option><option value="Quran Memorization">Quran Memorization</option><option value="Tajweed">Tajweed</option><option value="Islamic Studies">Islamic Studies</option><option value="Complete Program">Complete Program</option></select></div></div><div class="form-group"><label>Notes / Remarks</label><textarea id="graduationNotes" rows="3" placeholder="Enter any notes..."></textarea></div><div class="form-actions"><button type="submit" class="btn-primary">🏆 Mark as Graduated</button><button type="button" class="btn-secondary" onclick="cancelGraduation()">Cancel</button></div><div id="gradMessage" class="message-box"></div></form>
+                    </div>
+                    <div class="card"><h3>Graduated Students List</h3><div class="table-container"><table id="graduatedTable"><thead><tr><th>Name</th><th>Class</th><th>Graduation Date</th><th>Level</th><th>Actions</th></tr></thead><tbody id="graduatedTableBody"></tbody></table></div><div id="noGraduatedMessage" class="no-data">No graduated students yet</div></div>
+                </section>
+
+                <!-- ATTENDANCE -->
+                <!-- ATTENDANCE SECTION -->
+<section id="attendanceSection" class="section">
+    <div class="section-header"><h1>Daily Attendance</h1></div>
+    <div class="card">
+        <div class="date-selector">
+            <div class="form-group" style="margin:0;">
+                <label>Date:</label>
+                <input type="date" id="attendanceDate">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label>Class:</label>
+                <select id="attendanceClass">
+                    <option value="">Select Class...</option>
+                    <option value="فصل عمر">فصل عمر</option>
+                    <option value="فصل ابوبكر">فصل ابوبكر</option>
+                    <option value="فصل خديجة">فصل خديجة</option>
+                    <option value="فصل الهجاء الأول">فصل الهجاء الأول</option>
+                    <option value="فصل الهجاء الثاني">فصل الهجاء الثاني</option>
+                    <option value="فصل التأسيس">فصل التأسيس</option>
+                </select>
+            </div>
+            
+            <!-- CUSUB: DOORO SHIFT-KA (GALIN HORE / GALIN DAMBE) -->
+            <div class="form-group" style="margin:0;">
+                <label>Shift / Session:</label>
+                <select id="attendanceShift">
+                    <option value="Morning">Morning (Galin Hore)</option>
+                    <option value="Afternoon">Afternoon (Galin Dambe)</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin:0;"><label>Start Time:</label><input type="time" id="attStartTime" value="08:00"></div>
+            <div class="form-group" style="margin:0;"><label>End Time:</label><input type="time" id="attEndTime" value="12:00"></div>
+            <button id="loadAttendanceBtn" class="btn-primary">Load Students</button>
+        </div>
+    </div>
+    <div class="card" id="attendanceCard" style="display:none;">
+        <div class="table-container">
+            <table id="attendanceTable">
+                <thead><tr><th>Student Name</th><th>Class</th><th>Status</th></tr></thead>
+                <tbody id="attendanceTableBody"></tbody>
+            </table>
+        </div>
+        <div class="form-actions" id="saveAttendanceActions" style="display:none; margin-top: 20px;">
+            <button id="saveAttendanceBtn" class="btn-primary">💾 Save Attendance</button>
+        </div>
+        <div id="attMessage" class="message-box"></div>
+    </div>
+</section>
+
+                <!-- FINANCE -->
+                <section id="financeSection" class="section">
+                    <div class="section-header"><h1>Finance Management</h1></div>
+                    <div class="card">
+                        <h3 id="paymentFormTitle">Record New Payment</h3>
+                        <div class="search-box"><input type="text" id="financeSearchStudent" placeholder="Search student name or phone..."><select id="financeFilterClass"><option value="">All Classes</option><option value="فصل عمر">فصل عمر</option><option value="فصل ابوبكر">فصل ابوبكر</option><option value="فصل خديجة">فصل خديجة</option><option value="فصل الهجاء الأول">فصل الهجاء الأول</option><option value="فصل الهجاء الثاني">فصل الهجاء الثاني</option><option value="فصل التأسيس">فصل التأسيس</option></select></div>
+                        
+                        <div id="financeSummaryBoxes" style="display:none;" class="finance-summary-grid">
+                            <div class="summary-box box-required"><span class="box-label">Required Fee</span><strong class="box-value" id="finReqDisplay">$0.00</strong></div>
+                            <div class="summary-box box-paid"><span class="box-label">Total Paid</span><strong class="box-value" id="finPaidDisplay">$0.00</strong></div>
+                            <div class="summary-box box-balance"><span class="box-label">Remaining Balance</span><strong class="box-value" id="finBalDisplay">$0.00</strong></div>
+                        </div>
+
+                        <form id="paymentForm" style="display:none; margin-top: 20px;"><input type="hidden" id="paymentId"><input type="hidden" id="paymentStudentId"><div class="form-row"><div class="form-group"><label>Amount ($) *</label><input type="number" id="paymentAmount" required min="1" step="0.01"></div><div class="form-group"><label>Method *</label><select id="paymentMethod" required><option value="">Select...</option><option value="Cash">Cash</option><option value="Bank">Bank</option><option value="E-Dahab">E-Dahab</option><option value="Zaad">Zaad</option></select></div></div><div class="form-group"><label>Month *</label><select id="paymentMonth" required><option value="">Select Month...</option><option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option></select></div><div class="form-actions"><button type="submit" class="btn-primary" id="paySubmitBtn">Record Payment</button><button type="button" class="btn-secondary" onclick="cancelPaymentEdit()">Cancel</button></div><div id="payMessage" class="message-box"></div></form>
+                    </div>
+                    <div class="card"><h3>Payment History</h3><div class="table-container"><table id="paymentsTable"><thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Month</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead><tbody id="paymentsTableBody"></tbody></table></div></div>
+                </section>
+
+                <!-- REPORTS -->
+                <section id="reportsSection" class="section">
+                    <div class="section-header"><h1>Detailed Reports</h1></div>
+                    <div class="card">
+                        <h3>Generate Report</h3>
+                        <div class="form-row"><div class="form-group"><label>Report Type</label><select id="reportType"><option value="attendance">Attendance Report</option><option value="finance">Finance Report</option><option value="students">Students List</option><option value="graduated">Graduated Students</option></select></div><div class="form-group"><label>Class</label><select id="reportClass"><option value="">All Classes</option><option value="فصل عمر">فصل عمر</option><option value="فصل ابوبكر">فصل ابوبكر</option><option value="فصل خديجة">فصل خديجة</option><option value="فصل الهجاء الأول">فصل الهجاء الأول</option><option value="فصل الهجاء الثاني">فصل الهجاء الثاني</option><option value="فصل التأسيس">فصل التأسيس</option></select></div><div class="form-group"><label>Month</label><select id="reportMonth"><option value="">All Months</option><option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option></select></div></div>
+                        <div class="form-actions"><button onclick="generateReport()" class="btn-primary">Generate Report</button><button onclick="exportReportCSV()" class="btn-secondary">Download CSV</button><button onclick="window.print()" class="btn-secondary">🖨️ Print PDF</button></div>
+                    </div>
+                    <div id="reportContent" class="card" style="display:none;"></div>
+                </section>
+
+                <!-- ABOUT -->
+                <section id="aboutSection" class="section">
+                    <div class="section-header"><h1>About The System</h1></div>
+                    <div class="card about-card"><div class="about-header"><img src="logo.png" alt="Markaz Logo" class="about-logo" onerror="this.style.display='none'"><div><h2 class="school-name-arabic">مركز دار السعادة</h2><p class="school-name-english">MARKAZ DAARU SACAADA</p><p class="about-subtitle">School Management System</p></div></div><div class="about-content"><h3>System Overview</h3><p>This comprehensive School Management System is designed specifically for <strong>مركز دار السعادة (Markaz Daaru Sacaada)</strong>.</p><h3>Classes Available</h3><div class="classes-grid"><div class="class-item">📚 فصل عمر</div><div class="class-item">📚 فصل ابوبكر</div><div class="class-item">📚 فصل خديجة</div><div class="class-item">📚 فصل الهجاء الأول</div><div class="class-item">📚 فصل الهجاء الثاني</div><div class="class-item">📚 فصل التأسيس</div></div></div></div>
+                </section>
+
+                <!-- SETTINGS -->
+                <section id="settingsSection" class="section">
+                    <div class="section-header"><h1>System Settings</h1></div>
+                    <div class="card"><h3>General Settings</h3><form id="settingsForm"><div class="form-row"><div class="form-group"><label>School Name</label><input type="text" id="settingSchoolName"></div><div class="form-group"><label>Default Monthly Fee ($)</label><input type="number" id="settingMonthlyFee" min="0"></div></div><div class="form-actions"><button type="submit" class="btn-primary">Save Settings</button></div></form></div>
+                    <div class="card"><h3>Appearance & Data</h3><div class="settings-actions"><button onclick="toggleDarkMode()" class="btn-secondary">🌙 Toggle Dark/Light Mode</button><button onclick="exportAllData()" class="btn-secondary">📥 Backup Data (JSON)</button><label class="btn-secondary" style="cursor:pointer;">📤 Restore Data<input type="file" id="importDataFile" accept=".json" style="display:none;" onchange="importAllData(event)"></label><button onclick="clearAllData()" class="btn-danger">🗑️ Clear All Data</button></div></div>
+                </section>
+            </main>
+        </div>
+    </div>
+<!-- KU BADAL this: -->
+<script type="module" src="app.js"></script>
+</body>
+</html>
